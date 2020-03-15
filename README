@@ -1,0 +1,97 @@
+About
+-----
+DirCmp is a python program that allows the user to compare the contents of 2
+directories (and all subdirectories and files) in a visual way.  I origionally
+wrote it to check that copying of large amounts of files had occured correctly.
+However it is also useful for comparing 2 versions of directories (e.g. if a
+copy was placed in different places, and you're not sure which version you want
+to keep).  It also has features to compare individual files that differ, in
+part to see which version you want, but if you use something like meld (which I
+do), it will allow you to compare and edit the specified files, and will update
+the comparison after exiting that application, allowing the user to view, pick,
+chose, and edit differing files.  There is also the facility to clone or delete
+differing files and directories, again to allow the user to edit the
+directories being compared.
+
+Licence
+-------
+Copyright 2020 William Fraser
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program (gpl-3.0.txt).  If not,
+see <https://www.gnu.org/licenses/>.
+
+Be Aware
+--------
+Just to reiterate, this program is provided as is without any warranty.  I'm
+not a profesional software developer.  I have tested it but not under every
+possible circumstance, or in every possible situation, and there may well be
+bugs that I've not spotted.  The comparison part of the program should in
+theory offer no risks (assuming there are no missed bugs), but the copy and
+delete options obviously change data on your drives.  There is no undo option:
+once it's done, it's likely irreversible, so be careful.  I also can't vouch
+for the third party comparison utilities that DirCmp links to (or the
+underlying python or PyQt libraries for that matter).  As such there is no
+warranty, and you use it entirely at your own risk, and by using this software,
+you agree to this.  Neither myself, nor any other contributers are in anyway
+liable for any consequence of you using it.
+
+That said, I do try and make it as reliable as possible, and if you spot any
+problems, bugs, or flaws, please email me at william.fraser@virgin.net with
+full details, and if possible I will try and fix them (depending on the
+circumstances, and my decision is final).  Alternatively feel free to submit
+bug corrections directly to the github site where this project is hosted.
+
+Instalation
+-----------
+The DirCmp.py program can be saved to any directory that is convinient to you.
+
+DirCmp.py is designed to run under python 3.  This will probably already be
+present on most Linux distros.  The only other requirement is PyQt5.  If not
+present, you can either install it from your package manager (the package is
+called python3-pyqt5, so for Debian & Ubuntu based distros the command would
+be "sudo apt-get install python3-pyqt5" - without the quotes), or if you have
+pip installed, and would rather use python's own package manager, then the
+command is "pip3 install PyQt5-stubs" (again without the quotes).
+
+Running
+-------
+You can either run it from the command line or make a link to run it from the
+desktop.  If the file permissions are correct (if not use "chmod 755 DirCmp.py"
+without quotes to make it executable) then simply type in either the full path
+(i.e. "/home/william/DirCmp/DirCmp.py" without quotes), or if you are in the
+same directory, then "./DirCmp.py" again without quotes.  This relies on
+python3 being installed in the same place as on my machine (/usr/bin/python3)
+ - a fairly safe assumption.  If not you can edit the first line of the program
+with any text editor to change it to where your python3 executable is.  The
+other way is to type "python3 DirCmp.py" (without the quotes and substituting
+DirCmp.py for the full path name if running it from a directory other than
+where the program is saved).
+
+The alternative is making a menu or desktop short-cut.  How to do this this
+varies from distro to distro.  Try right clicking the menu button or right
+clicking on the open menu and see if there is an "Edit menu" or "Edit
+applications" option.  This should open up an application to edit your menu
+items.  Alternatively there may be a program in the system or settings menu
+that allows you to edit your menu.  If not, all I can suggest is to use a
+search engine to find out how to add an item to the start menu for your
+distro.  When you have the menu editor open, and have created a new menu item,
+you can set things generally to what you want, the important entry is the
+command to run.  This should be "/usr/bin/python3 /home/william/DirCmp/DirCmp.py"
+(again without quotes, and adjusted if needed to where your python executable
+is located if needed, and where you have saved this program).
+
+Adding a desktop shortcut again varies, but generally you right click on the
+desktop, and select the "create new launcher" or "create new shortcut" option.
+Once you have the editor open, the same general advice applies as to editing
+a menu entry.
