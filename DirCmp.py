@@ -772,9 +772,6 @@ class DirCmpGUI(QtGui.QMainWindow):
 
         self.setWindowTitle("DirCmp")
 
-        self.dira = dira
-        self.dirb = dirb
-
         self.lastDisplayedResult = None
 
         lay = QtGui.QVBoxLayout()
@@ -959,9 +956,12 @@ class DirCmpGUI(QtGui.QMainWindow):
         if not cmputil:
             return
 
+        dira = self.cmpview.model().dira
+        dirb = self.cmpview.model().dirb
+
         process = Popen([cmputil.exe,
-                         os.path.join(self.dira, *i.localpath(), i.name),
-                         os.path.join(self.dirb, *i.localpath(), i.name)],
+                         os.path.join(dira, *i.localpath(), i.name),
+                         os.path.join(dirb, *i.localpath(), i.name)],
                         stdout=PIPE)
         (output, err) = process.communicate()
         exit_code = process.wait()
@@ -1003,13 +1003,17 @@ class DirCmpGUI(QtGui.QMainWindow):
         si = self.cmpview.selectedIndexes()
         if not si or len(si) == 0:
             return
+
+        dira = self.cmpview.model().dira
+        dirb = self.cmpview.model().dirb
+
         i = si[0].internalPointer()
         question = ('''Are you sure you want to copy "{}"{} from directory \
 A("{}") to directory B("{}")?'''
                     .format(i.name,
                             "(including children)" if i.children else "",
-                            os.path.join(self.dira, *i.localpath()),
-                            os.path.join(self.dirb, *i.localpath())))
+                            os.path.join(dira, *i.localpath()),
+                            os.path.join(dirb, *i.localpath())))
         reply = QtGui.QMessageBox.question(self, "Are you Sure?", question,
                                            (QtGui.QMessageBox.Yes |
                                             QtGui.QMessageBox.No),
@@ -1018,13 +1022,12 @@ A("{}") to directory B("{}")?'''
             return
 
         for j in i.iterateSelfAndChildren():
-            fTo = os.path.join(self.dirb, *j.localpath(), j.name)
+            fTo = os.path.join(dirb, *j.localpath(), j.name)
             if j.isFolder():
                 if not os.path.exists(fTo):
                     os.makedirs(fTo, exist_ok=True)
             else:
-                self.copyFile(os.path.join(self.dira, *j.localpath(), j.name),
-                              fTo)
+                self.copyFile(os.path.join(dira, *j.localpath(), j.name), fTo)
 
             while j.parent:
                 j.result = CmpResult.File_Await_Comparison
@@ -1036,15 +1039,17 @@ A("{}") to directory B("{}")?'''
         si = self.cmpview.selectedIndexes()
         if not si or len(si) == 0:
             return
+
+        dira = self.cmpview.model().dira
+        dirb = self.cmpview.model().dirb
+
         i = si[0].internalPointer()
         question = '''Are you sure you want to copy "{}"{} from directory \
 B("{}") to directory A("{}")?'''.format(i.name,
                                         ("(including children)" if i.children
                                          else ""),
-                                        os.path.join(self.dirb,
-                                                     *i.localpath()),
-                                        os.path.join(self.dira,
-                                                     *i.localpath()))
+                                        os.path.join(dirb, *i.localpath()),
+                                        os.path.join(dira, *i.localpath()))
         reply = QtGui.QMessageBox.question(self, "Are you Sure?", question,
                                            (QtGui.QMessageBox.Yes |
                                             QtGui.QMessageBox.No),
@@ -1053,12 +1058,12 @@ B("{}") to directory A("{}")?'''.format(i.name,
             return
 
         for j in i.iterateSelfAndChildren():
-            fTo = os.path.join(self.dira, *j.localpath(), j.name)
+            fTo = os.path.join(dira, *j.localpath(), j.name)
             if j.isFolder():
                 if not os.path.exists(fTo):
                     os.makedirs(fTo, exist_ok=True)
             else:
-                self.copyFile(os.path.join(self.dirb, *j.localpath(), j.name),
+                self.copyFile(os.path.join(dirb, *j.localpath(), j.name),
                               fTo)
 
             while j.parent:
@@ -1073,12 +1078,14 @@ B("{}") to directory A("{}")?'''.format(i.name,
             return
         i = si[0].internalPointer()
 
+        dira = self.cmpview.model().dira
+        dirb = self.cmpview.model().dirb
+
         # are we sure we want to delete?
         question = '''Are you sure you want to delete "{}"{} from directory \
 {}("{}")?'''.format(i.name, "(including children)" if i.children else "",
                     "A" if delA else "B",
-                    os.path.join(self.dira if delA else self.dirb,
-                                 *i.localpath()))
+                    os.path.join(dira if delA else dirb, *i.localpath()))
         reply = QtGui.QMessageBox.question(self, "Are you Sure?", question,
                                            (QtGui.QMessageBox.Yes |
                                             QtGui.QMessageBox.No),
@@ -1092,8 +1099,7 @@ B("{}") to directory A("{}")?'''.format(i.name,
 
         # remember filename and parent for later, i will not be valid by
         # time have to physically remove them
-        f = os.path.join(self.dira if delA else self.dirb, *i.localpath(),
-                         i.name)
+        f = os.path.join(dira if delA else dirb, *i.localpath(), i.name)
         p = i.parent
 
         # remove from table if needed
@@ -1135,10 +1141,10 @@ B("{}") to directory A("{}")?'''.format(i.name,
             result = CmpResult.File_Identical
 
         # possible to be left with one empty directory
-        existsa = os.path.exists(os.path.join(self.dira, *p.localpath(),
-                                              p.name))
-        existsb = os.path.exists(os.path.join(self.dirb, *p.localpath(),
-                                              p.name))
+        existsa = os.path.exists(os.path.join(self.cmpview.model().dira,
+                                              *p.localpath(), p.name))
+        existsb = os.path.exists(os.path.join(self.cmpview.model().dirb,
+                                              *p.localpath(), p.name))
         if(p.isFolder() and p != self.cmpview.model().rootItem and
            existsa != existsb):
             result = (CmpResult.File_In_A_Only if existsa else CmpResult
@@ -1201,8 +1207,10 @@ B("{}") to directory A("{}")?'''.format(i.name,
                 self.resultUI[y][2].setText('-')
             return
 
-        filea = os.path.join(self.dira, *cmpresult.localpath(), cmpresult.name)
-        fileb = os.path.join(self.dirb, *cmpresult.localpath(), cmpresult.name)
+        filea = os.path.join(self.cmpview.model().dira,
+                             *cmpresult.localpath(), cmpresult.name)
+        fileb = os.path.join(self.cmpview.model().dirb,
+                             *cmpresult.localpath(), cmpresult.name)
         stata = os.stat(filea, follow_symlinks=False) if os.path.exists(
             filea) else None
         statb = os.stat(fileb, follow_symlinks=False) if os.path.exists(
@@ -1268,7 +1276,6 @@ B("{}") to directory A("{}")?'''.format(i.name,
             QtGui.QFileDialog.ShowDirsOnly)
         if newdir != "":
             self.ledira.setText(newdir)
-            self.dira = newdir
 
     def handleBrowseB(self):
         newdir = QtGui.QFileDialog.getExistingDirectory(
@@ -1276,7 +1283,6 @@ B("{}") to directory A("{}")?'''.format(i.name,
             QtGui.QFileDialog.ShowDirsOnly)
         if newdir != "":
             self.ledirb.setText(newdir)
-            self.dirb = newdir
 
     def LoadPreviousComparison(self):
         f = QtGui.QFileDialog.getOpenFileName(self, 'Open file')[0]
